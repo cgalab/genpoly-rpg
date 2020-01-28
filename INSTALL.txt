@@ -1,0 +1,14 @@
+# BUILD RPG
+
+This software uses cmake as build system. In order to build 'rpg' you may
+want to run the following commands:
+
+     cmake -D CMAKE_BUILD_TYPE=Release .
+     make
+     (make install)
+
+Then you will find the executable file in src/.
+
+However, cmake provides lots of additional options. E.g., by replacing
+"CMAKE_BUILD_TYPE=Release" with "CMAKE_BUILD_TYPE=Debug" you will get
+a version with debugging support.

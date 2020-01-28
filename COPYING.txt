@@ -1,0 +1,20 @@
+/*****************************************************************************/
+/*                                                                           */
+/*                     Random Polygon Generator (RPG)                        */
+/*                                                                           */
+/* Copyright (C)  T. Auer, M. Gschwandtner, M. Heimlich, M. Held   1994-2020 */
+/*                                                                           */
+/*****************************************************************************/
+/*                                                                           */
+/* This program is free software; you may redistribute it and/or modify it   */
+/* under the terms of the GNU General Public License as published by the     */
+/* Free Software Foundation; either version 3 of the License, or (at your    */
+/* option) any later version.                                                */
+/*                                                                           */
+/* Please note that this program includes an old version of qhull for        */
+/* computing convex hulls. The source code for qhull is provided only for    */
+/* convenience purposes but is not covered by the license regulations for    */
+/* the rest of RPG. Please see http://www.qhull.org/ for license regulations */
+/* and for the most recent version of the qhull code.                        */
+/*                                                                           */
+/*****************************************************************************/
