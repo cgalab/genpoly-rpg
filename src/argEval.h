@@ -39,7 +39,7 @@ int AEeval(int argc, char *argv[], int *nrOfPoints, int *nrOfPolys,
            int *format, int *seed, int *smooth, enum t_calcType *algo, 
            char *inFile, char *outFile, int *analysis, int *sinuosity, 
            int *angRes, int *lenRes, int *slopeRes, int *auxParam, 
-           int *cluster, int *nholes);  
+           int *cluster, int *nholes, int *status_fd);
 
 
 #endif

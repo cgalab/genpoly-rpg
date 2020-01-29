@@ -31,6 +31,9 @@
 /* get standard libraries */
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/time.h>
+#include <sys/resource.h>
+#include <errno.h>
 
 #include "pointOps.h"
 #include "polyOps.h"
@@ -61,10 +64,29 @@ void PrintHeader(void)
 }
 
 
+double get_current_rtime(void) {
+  struct rusage usage;
+  if (getrusage(RUSAGE_SELF, &usage) < 0) {
+    fprintf(stderr, "getrusage() failed: %s\n", strerror(errno));
+    exit(1);
+  }
+  return usage.ru_utime.tv_sec + (double)usage.ru_utime.tv_usec/1e6;
+}
+long get_maxrss(void) {
+  struct rusage usage;
+  if (getrusage(RUSAGE_SELF, &usage) < 0) {
+    fprintf(stderr, "getrusage() failed: %s\n", strerror(errno));
+    exit(1);
+  }
+  return usage.ru_maxrss;
+}
+
+
 int main(int argc, char *argv[])
 {
    int format, nrOfPoints, nrOfPolys, seed, smooth;  
    int analysis, sinuosity, lenRes, angleRes, slopeRes, count, cluster;  
+   int status_fd;
    int auxParam, nholes;  
    t_pointArray pArray;  
    enum t_calcType algo;  
@@ -84,7 +106,7 @@ int main(int argc, char *argv[])
    /*                                                                        */
    if (!AEeval(argc, argv, &nrOfPoints, &nrOfPolys, &format, &seed, &smooth, 
                &algo, inFile, outFName, &analysis, &sinuosity, &angleRes, 
-               &lenRes, &slopeRes, &auxParam, &cluster, &nholes)) {
+               &lenRes, &slopeRes, &auxParam, &cluster, &nholes, &status_fd)) {
       exit(1);  
    }
 
@@ -137,6 +159,7 @@ int main(int argc, char *argv[])
    /* generate the polygon(s)                                                */
    /*                                                                        */
    PAlistInitArray(&pArray, POgetPointList());  
+   double rtime_started = get_current_rtime();
    for (count = 1;   count <= nrOfPolys;   count++) {
       /*                                                                     */
       /* restore the initial point set                                       */
@@ -191,7 +214,19 @@ int main(int argc, char *argv[])
       else if (sinuosity)
          YOsinuosityII();  
    }
-   
+   double rtime_ended = get_current_rtime();
+   long rmem = get_maxrss();
+   if (status_fd >= 0) {
+      FILE *status = fdopen(status_fd, "a");
+      if (!status) {
+         fprintf(stderr, "Cannot open status FD %d: %s\n", status_fd, strerror(errno));
+         exit(-1);
+      }
+
+      fprintf(status, "[STATUS] CPUTIME: %.6lf\n", rtime_ended - rtime_started);
+      fprintf(status, "[STATUS] MAXRSS: %ld\n", rmem);
+   }
+
    PAfreeArray(&pArray);  
    
    /*                                                                        */

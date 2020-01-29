@@ -36,7 +36,7 @@ int AEeval(int argc, char *argv[], int *nrOfPoints, int *nrOfPolys,
            int *format, int *seed, int *smooth, enum t_calcType *algo, 
            char *inFile, char *outFile, int *analysis, int *sinuosity, 
            int *angRes, int *lenRes, int *slopeRes, int *auxParam, 
-           int *cluster, int *nholes)
+           int *cluster, int *nholes, int *status_fd)
 {
    int count;  
    int success = TRUE;  
@@ -55,6 +55,7 @@ int AEeval(int argc, char *argv[], int *nrOfPoints, int *nrOfPolys,
    (*auxParam) = RPG_UNDEFINED;  
    (*cluster) = 0;  
    (*nholes) = 0;  
+   (*status_fd) = -1;
 
    count = 1;  
    while ((count < argc) && success)    {
@@ -212,6 +213,12 @@ int AEeval(int argc, char *argv[], int *nrOfPoints, int *nrOfPolys,
          count++;  
          if ((success = count < argc)) {
             strcpy(inFile, argv[count]);  
+         }
+      }
+      else if (strcasecmp(argv[count], "--status-fd") == 0) {
+         count++;
+         if ((success = count < argc)) {
+            (*status_fd) = atoi(argv[count]);
          }
       }
       else {
