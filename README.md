@@ -47,7 +47,7 @@ Please see the following publication for details on the algorithms:
    Thomas Auer and Martin Held.
    Heuristics for the generation of random polygons.
    Proc. 8th Canadian Conference on Computational Geometry (CCCG'96), pages 38-43, 1996.
-   http://www.cccg.ca/proceedings/1996/cccg1996_0006.pdf.
+   http://www.cccg.ca/proceedings/1996/cccg1996_0007.pdf.
 
 We have the following correspondence to the algorithms described in this paper:
 
