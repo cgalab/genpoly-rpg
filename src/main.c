@@ -127,10 +127,10 @@ int main(int argc, char *argv[])
    /*                                                                        */
    /* initialize random-number generator                                     */
    /*                                                                        */
-   if (seed >= 0)
-      srand48(seed);  
-   else
-      srand48(1);  
+   if (seed < 0) {
+     seed = 1;
+   }
+   srand48(seed);
    
    /*                                                                        */
    /* generate the specified number of random points                         */
@@ -230,6 +230,7 @@ int main(int argc, char *argv[])
       fprintf(status, "[STATUS] INPUT_SIZE: %d\n", pArray.nrOfPoints);
       fprintf(status, "[STATUS] CPUTIME: %.6lf\n", rtime_ended - rtime_started);
       fprintf(status, "[STATUS] MAXRSS: %ld\n", rmem);
+      fprintf(status, "[STATUS] SEED: %d\n", seed);
    }
 
    PAfreeArray(&pArray);  
