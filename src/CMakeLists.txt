@@ -19,17 +19,16 @@ qhull.c           quadEdge.c      set.c            stateLine.c
 smoothPoly.c     sortPoly.c        starKernel.c    starPoly.c
 stat.c           sweepArrange.c  triangAVL.c
 triangArray.c    uLongArray.c      user.c         voidIncArray.c
-	)
+"${PROJECT_BINARY_DIR}/src/gitversion.h"
+)
 
 include(CheckIncludeFile)
 if(NOT CMAKE_BUILD_TYPE STREQUAL "Release")
 	message("Building debug version")
 endif()
 
-
-
-
-add_executable(rpg ${rpg_SRC} main.c) 
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+add_executable(rpg ${rpg_SRC} main.c)
 
 find_library(M_LIB m)
 target_link_libraries(rpg ${M_LIB})
@@ -37,3 +36,12 @@ target_link_libraries(rpg ${rpg_LIBS})
 set(rpg_flags "")	
 
 set_target_properties(rpg PROPERTIES COMPILE_FLAGS "${rpg_flags}")
+
+add_custom_command(
+  OUTPUT "${PROJECT_BINARY_DIR}/src/gitversion.h"
+  DEPENDS "${CMAKE_SOURCE_DIR}/.git/logs/HEAD"
+  COMMAND ${CMAKE_COMMAND}
+    -Dlocal_dir="${CMAKE_SOURCE_DIR}"
+    -Doutput_dir="${PROJECT_BINARY_DIR}/src"
+    -P "${CMAKE_SOURCE_DIR}/cmake/gitversion.cmake"
+)

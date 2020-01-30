@@ -31,6 +31,9 @@
 /* get standard libraries */
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/time.h>
+#include <sys/resource.h>
+#include <errno.h>
 
 #include "pointOps.h"
 #include "polyOps.h"
@@ -40,24 +43,44 @@
 #include "calcPoly.h"
 #include "outWrite.h"
 #include "analysisII.h"
-
+#include "gitversion.h"
 
 void PrintHeader(void)
 {
    printf("\n");  
-   printf("**************************************************************************\n");  
-   printf("*                                                                        *\n");  
-   printf("*                     RandomPolygonGenerator: RPG 3.0                    *\n");  
-   printf("*                                                                        *\n");  
-   printf("*   T. Auer, M. Gschwandtner, M. Heimlich, M. Held       (C) 1994-2020   *\n");  
-   printf("*                                                                        *\n");  
-   printf("* Univ. Salzburg, FB Computerwissenschaften,                             *\n");  
-   printf("* Computational Geometry and Applications Lab                            *\n");  
-   printf("* A-5020 Salzburg, Austria                            held@cs.sbg.ac.at  *\n");  
-   printf("*                                                                        *\n");  
-   printf("**************************************************************************\n");  
+   printf("**************************************************************************\n");
+   printf("*                                                                        *\n");
+   printf("*                     RandomPolygonGenerator: RPG 3.0                    *\n");
+   printf("*                     %-50s *\n", GITVERSION);
+   printf("*                                                                        *\n");
+   printf("* (c) 1994-2020  T. Auer, M. Gschwandtner, M. Heimlich, M. Held,         *\n");
+   printf("*                P. Palfrader                                            *\n");
+   printf("*                                                                        *\n");
+   printf("* Univ. Salzburg, FB Computerwissenschaften,                             *\n");
+   printf("* Computational Geometry and Applications Lab                            *\n");
+   printf("* A-5020 Salzburg, Austria                            held@cs.sbg.ac.at  *\n");
+   printf("*                                                                        *\n");
+   printf("**************************************************************************\n");
 
    return;  
+}
+
+
+double get_current_rtime(void) {
+  struct rusage usage;
+  if (getrusage(RUSAGE_SELF, &usage) < 0) {
+    fprintf(stderr, "getrusage() failed: %s\n", strerror(errno));
+    exit(1);
+  }
+  return usage.ru_utime.tv_sec + (double)usage.ru_utime.tv_usec/1e6;
+}
+long get_maxrss(void) {
+  struct rusage usage;
+  if (getrusage(RUSAGE_SELF, &usage) < 0) {
+    fprintf(stderr, "getrusage() failed: %s\n", strerror(errno));
+    exit(1);
+  }
+  return usage.ru_maxrss;
 }
 
 
@@ -65,6 +88,7 @@ int main(int argc, char *argv[])
 {
    int format, nrOfPoints, nrOfPolys, seed, smooth;  
    int analysis, sinuosity, lenRes, angleRes, slopeRes, count, cluster;  
+   int status_fd;
    int auxParam, nholes;  
    t_pointArray pArray;  
    enum t_calcType algo;  
@@ -84,7 +108,7 @@ int main(int argc, char *argv[])
    /*                                                                        */
    if (!AEeval(argc, argv, &nrOfPoints, &nrOfPolys, &format, &seed, &smooth, 
                &algo, inFile, outFName, &analysis, &sinuosity, &angleRes, 
-               &lenRes, &slopeRes, &auxParam, &cluster, &nholes)) {
+               &lenRes, &slopeRes, &auxParam, &cluster, &nholes, &status_fd)) {
       exit(1);  
    }
 
@@ -103,10 +127,10 @@ int main(int argc, char *argv[])
    /*                                                                        */
    /* initialize random-number generator                                     */
    /*                                                                        */
-   if (seed >= 0)
-      srand48(seed);  
-   else
-      srand48(1);  
+   if (seed < 0) {
+     seed = 1;
+   }
+   srand48(seed);
    
    /*                                                                        */
    /* generate the specified number of random points                         */
@@ -137,6 +161,7 @@ int main(int argc, char *argv[])
    /* generate the polygon(s)                                                */
    /*                                                                        */
    PAlistInitArray(&pArray, POgetPointList());  
+   double rtime_started = get_current_rtime();
    for (count = 1;   count <= nrOfPolys;   count++) {
       /*                                                                     */
       /* restore the initial point set                                       */
@@ -191,7 +216,23 @@ int main(int argc, char *argv[])
       else if (sinuosity)
          YOsinuosityII();  
    }
-   
+   double rtime_ended = get_current_rtime();
+   long rmem = get_maxrss();
+   if (status_fd >= 0) {
+      FILE *status = fdopen(status_fd, "a");
+      if (!status) {
+         fprintf(stderr, "Cannot open status FD %d: %s\n", status_fd, strerror(errno));
+         exit(-1);
+      }
+
+      fprintf(status, "[STATUS] VERSION: %s\n", GITVERSION);
+      fprintf(status, "[STATUS] GENERATOR: rpg-%s\n", CALCTYPE_STRING[algo]);
+      fprintf(status, "[STATUS] INPUT_SIZE: %d\n", pArray.nrOfPoints);
+      fprintf(status, "[STATUS] CPUTIME: %.6lf\n", rtime_ended - rtime_started);
+      fprintf(status, "[STATUS] MAXRSS: %ld\n", rmem);
+      fprintf(status, "[STATUS] SEED: %d\n", seed);
+   }
+
    PAfreeArray(&pArray);  
    
    /*                                                                        */
