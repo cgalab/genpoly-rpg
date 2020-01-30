@@ -225,7 +225,7 @@ int main(int argc, char *argv[])
       }
 
       fprintf(status, "[STATUS] VERSION: %s\n", GITVERSION);
-      fprintf(status, "[STATUS] GENERATOR: rpg\n");
+      fprintf(status, "[STATUS] GENERATOR: rpg-%s\n", CALCTYPE_STRING[algo]);
       fprintf(status, "[STATUS] INPUT_SIZE: %d\n", pArray.nrOfPoints);
       fprintf(status, "[STATUS] CPUTIME: %.6lf\n", rtime_ended - rtime_started);
       fprintf(status, "[STATUS] MAXRSS: %ld\n", rmem);

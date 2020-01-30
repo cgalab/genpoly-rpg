@@ -15,28 +15,38 @@
 /*                                                                  */
 /********************************************************************/
 
+#define FOREACH_CALCTYPE(CALCTYPE) \
+        CALCTYPE(CP_IDLE)          \
+        CALCTYPE(CP_POINTS)        \
+        CALCTYPE(CP_CIRCLEPOINTS)  \
+        CALCTYPE(CP_CLUSTERPOINTS) \
+        CALCTYPE(CP_SMOOTH)        \
+        CALCTYPE(CP_BOUNCE)        \
+        CALCTYPE(CP_XMONO)         \
+        CALCTYPE(CP_ARRANGE_STAR)  \
+        CALCTYPE(CP_FAST_STAR)     \
+        CALCTYPE(CP_STAR)          \
+        CALCTYPE(CP_GROWING)       \
+        CALCTYPE(CP_GROWING_II)    \
+        CALCTYPE(CP_2OPT)          \
+        CALCTYPE(CP_2OPT_II)       \
+        CALCTYPE(CP_2OPT_III)      \
+        CALCTYPE(CP_SPACE_PART)    \
+        CALCTYPE(CP_REJECT)        \
+        CALCTYPE(CP_SEARCH)        \
+        CALCTYPE(CP_TRIANGLE)      \
+        CALCTYPE(CP_HOLES)
+
+#define GENERATE_ENUM(ENUM) ENUM,
+#define GENERATE_STRING(STRING) #STRING,
+
 enum t_calcType {
-  CP_IDLE, 
-  CP_POINTS, 
-  CP_CIRCLEPOINTS, 
-  CP_CLUSTERPOINTS, 
-  CP_SMOOTH, 
-  CP_BOUNCE, 
-  CP_XMONO, 
-  CP_ARRANGE_STAR, 
-  CP_FAST_STAR, 
-  CP_STAR, 
-  CP_GROWING, 
-  CP_GROWING_II, 
-  CP_2OPT, 
-  CP_2OPT_II, 
-  CP_2OPT_III, 
-  CP_SPACE_PART, 
-  CP_REJECT, 
-  CP_SEARCH, 
-  CP_TRIANGLE, 
-  CP_HOLES
-};  
+  FOREACH_CALCTYPE(GENERATE_ENUM)
+};
+
+static const char *CALCTYPE_STRING[] = {
+  FOREACH_CALCTYPE(GENERATE_STRING)
+};
 
 
 /********************************************************************/
