@@ -48,18 +48,19 @@
 void PrintHeader(void)
 {
    printf("\n");  
-   printf("**************************************************************************\n");  
-   printf("*                                                                        *\n");  
-   printf("*                     RandomPolygonGenerator: RPG 3.0                    *\n");  
+   printf("**************************************************************************\n");
+   printf("*                                                                        *\n");
+   printf("*                     RandomPolygonGenerator: RPG 3.0                    *\n");
    printf("*                     %-50s *\n", GITVERSION);
-   printf("*                                                                        *\n");  
-   printf("*   T. Auer, M. Gschwandtner, M. Heimlich, M. Held       (C) 1994-2020   *\n");  
-   printf("*                                                                        *\n");  
-   printf("* Univ. Salzburg, FB Computerwissenschaften,                             *\n");  
-   printf("* Computational Geometry and Applications Lab                            *\n");  
-   printf("* A-5020 Salzburg, Austria                            held@cs.sbg.ac.at  *\n");  
-   printf("*                                                                        *\n");  
-   printf("**************************************************************************\n");  
+   printf("*                                                                        *\n");
+   printf("* (c) 1994-2020  T. Auer, M. Gschwandtner, M. Heimlich, M. Held,         *\n");
+   printf("*                P. Palfrader                                            *\n");
+   printf("*                                                                        *\n");
+   printf("* Univ. Salzburg, FB Computerwissenschaften,                             *\n");
+   printf("* Computational Geometry and Applications Lab                            *\n");
+   printf("* A-5020 Salzburg, Austria                            held@cs.sbg.ac.at  *\n");
+   printf("*                                                                        *\n");
+   printf("**************************************************************************\n");
 
    return;  
 }
