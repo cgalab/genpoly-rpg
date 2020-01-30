@@ -43,7 +43,7 @@
 #include "calcPoly.h"
 #include "outWrite.h"
 #include "analysisII.h"
-
+#include "gitversion.h"
 
 void PrintHeader(void)
 {
@@ -51,6 +51,7 @@ void PrintHeader(void)
    printf("**************************************************************************\n");  
    printf("*                                                                        *\n");  
    printf("*                     RandomPolygonGenerator: RPG 3.0                    *\n");  
+   printf("*                     %-50s *\n", GITVERSION);
    printf("*                                                                        *\n");  
    printf("*   T. Auer, M. Gschwandtner, M. Heimlich, M. Held       (C) 1994-2020   *\n");  
    printf("*                                                                        *\n");  
@@ -223,6 +224,8 @@ int main(int argc, char *argv[])
          exit(-1);
       }
 
+      fprintf(status, "[STATUS] VERSION: %s\n", GITVERSION);
+      fprintf(status, "[STATUS] GENERATOR: rpg\n");
       fprintf(status, "[STATUS] INPUT_SIZE: %d\n", pArray.nrOfPoints);
       fprintf(status, "[STATUS] CPUTIME: %.6lf\n", rtime_ended - rtime_started);
       fprintf(status, "[STATUS] MAXRSS: %ld\n", rmem);
