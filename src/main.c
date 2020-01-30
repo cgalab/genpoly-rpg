@@ -223,6 +223,7 @@ int main(int argc, char *argv[])
          exit(-1);
       }
 
+      fprintf(status, "[STATUS] INPUT_SIZE: %d\n", pArray.nrOfPoints);
       fprintf(status, "[STATUS] CPUTIME: %.6lf\n", rtime_ended - rtime_started);
       fprintf(status, "[STATUS] MAXRSS: %ld\n", rmem);
    }
