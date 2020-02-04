@@ -9,6 +9,9 @@ if(GIT_FOUND)
     ERROR_QUIET
     OUTPUT_STRIP_TRAILING_WHITESPACE
   )
+  if ("${GITVERSION}" STREQUAL "")
+    set(GITVERSION "unknown")
+  endif()
   message( STATUS "GIT hash: ${GITVERSION}")
 else()
   message(STATUS "GIT not found")

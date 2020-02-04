@@ -37,9 +37,15 @@ set(rpg_flags "")
 
 set_target_properties(rpg PROPERTIES COMPILE_FLAGS "${rpg_flags}")
 
+set(GITVERSION_DEPENDS "${CMAKE_SOURCE_DIR}/.git/logs/HEAD")
+if (NOT EXISTS "${GITVERSION_DEPENDS}")
+  message(STATUS "Not a git checkout")
+  set(GITVERSION_DEPENDS "")
+endif()
+
 add_custom_command(
   OUTPUT "${PROJECT_BINARY_DIR}/src/gitversion.h"
-  DEPENDS "${CMAKE_SOURCE_DIR}/.git/logs/HEAD"
+  DEPENDS "${GITVERSION_DEPENDS}"
   COMMAND ${CMAKE_COMMAND}
     -Dlocal_dir="${CMAKE_SOURCE_DIR}"
     -Doutput_dir="${PROJECT_BINARY_DIR}/src"
