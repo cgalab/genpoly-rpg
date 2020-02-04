@@ -29,37 +29,31 @@
 
 void EAinitArray(t_edgeIArray *anArray, int initialSize)
 { 
-  int i;  
-  struct lineContainer *tmp;  
-
-  IIinitArray(&(anArray->pIndex1), initialSize);  
-  IIinitArray(&(anArray->pIndex2), initialSize);  
-  
+   IIinitArray(&(anArray->pIndex1), initialSize);  
+   IIinitArray(&(anArray->pIndex2), initialSize);    
 }
 
 void EAinitArray2(t_edgeIArray *anArray, int initialSize)
 { 
-  int i;  
-  struct lineContainer *tmp;  
-
-  anArray->gridSize=(int)(0.5*sqrt(initialSize))+10;  
-  //printf ("SECT_GRID_SIZE: %i\n", anArray->gridSize);  
-  allocSectorArray(anArray->gridSize);  
-  anArray->geomHash=(struct hashSector *)malloc(anArray->gridSize*anArray->gridSize*sizeof(hashSector));  
-  anArray->dirtySectors =(struct hashSector **)malloc(anArray->gridSize*anArray->gridSize*sizeof(hashSector *));  
-  for (i=0;  i<anArray->gridSize*anArray->gridSize;  i++) {
-     NLInit(&(anArray->geomHash[i].lines));  
-     anArray->geomHash[i].sectorNumber = i;  
-     anArray->geomHash[i].dirty = 0;  
-  }
-  anArray->numDirty = 0;  
-//NLInit(anArray->dirtySectors);  
-  
-  VIinitArray(&(anArray->lines), initialSize);  
-
-  IIinitArray(&(anArray->pIndex1), initialSize);  
-  IIinitArray(&(anArray->pIndex2), initialSize);  
-  
+   int i;  
+   
+   anArray->gridSize=(int)(0.5*sqrt(initialSize))+10;  
+   //printf ("SECT_GRID_SIZE: %i\n", anArray->gridSize);  
+   allocSectorArray(anArray->gridSize);  
+   anArray->geomHash=(struct hashSector *)malloc(anArray->gridSize*anArray->gridSize*sizeof(hashSector));  
+   anArray->dirtySectors =(struct hashSector **)malloc(anArray->gridSize*anArray->gridSize*sizeof(hashSector *));  
+   for (i = 0;  i < anArray->gridSize*anArray->gridSize;  i++) {
+      NLInit(&(anArray->geomHash[i].lines));  
+      anArray->geomHash[i].sectorNumber = i;  
+      anArray->geomHash[i].dirty = 0;  
+   }
+   anArray->numDirty = 0;  
+   //NLInit(anArray->dirtySectors);  
+   
+   VIinitArray(&(anArray->lines), initialSize);  
+   
+   IIinitArray(&(anArray->pIndex1), initialSize);  
+   IIinitArray(&(anArray->pIndex2), initialSize);  
 }
 
 

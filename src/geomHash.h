@@ -57,7 +57,7 @@ int maxInUse();
 int maxUsedEL();  
 struct lineElement *getLineElement_FreeList();  
 void resetLineElement_FreeList();  
-int allocSectorArray(int sect_size);  
+void allocSectorArray(int sect_size);  
 void freeSectorArray();  
 
 

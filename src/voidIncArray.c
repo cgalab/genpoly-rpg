@@ -53,17 +53,17 @@ void VIsetVoid(t_vIncArray *anArray, int index, void *newValue)
 
 void VIaddVoid(t_vIncArray *anArray, void *newVoid)
 {
-	//printf ("1 addVoid curNrOfPoints: %d\n", anArray->curNrOfPoints);  
-
-	anArray->curNrOfPoints++;  
-	//printf ("2 addVoid curNrOfPoints: %d\n", anArray->curNrOfPoints);  
-  if (anArray->curNrOfPoints > VAsizeOf(&(anArray->array)))
-    /* current allocated array is already filled, allocate new
-       array and copy points */
-    VArealloc(&(anArray->array), 
-		   VAsizeOf(&(anArray->array))+anArray->growthSize);  
-
-    VAsetVoid(&(anArray->array), anArray->curNrOfPoints, newVoid);  
+   //printf ("1 addVoid curNrOfPoints: %d\n", anArray->curNrOfPoints);  
+   
+   anArray->curNrOfPoints++;  
+   //printf ("2 addVoid curNrOfPoints: %d\n", anArray->curNrOfPoints);  
+   if (anArray->curNrOfPoints > VAsizeOf(&(anArray->array)))
+      /* current allocated array is already filled, allocate new
+         array and copy points */
+      VArealloc(&(anArray->array), 
+                VAsizeOf(&(anArray->array))+anArray->growthSize);  
+   
+   VAsetVoid(&(anArray->array), anArray->curNrOfPoints, newVoid);  
 }
 
 

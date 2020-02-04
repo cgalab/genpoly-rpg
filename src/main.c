@@ -45,13 +45,17 @@
 #include "analysisII.h"
 #include "gitversion.h"
 
+static const char *CALCTYPE_STRING[] = {
+  FOREACH_CALCTYPE(GENERATE_STRING)
+};
+
 void PrintHeader(void)
 {
    printf("\n");  
    printf("**************************************************************************\n");
    printf("*                                                                        *\n");
    printf("*                     RandomPolygonGenerator: RPG 3.0                    *\n");
-   printf("*                     git: %-46s *\n", GITVERSION);
+   printf("*                     git: %-46s*\n", GITVERSION);
    printf("*                                                                        *\n");
    printf("* (c) 1994-2020  T. Auer, M. Gschwandtner, M. Heimlich, M. Held,         *\n");
    printf("*                P. Palfrader                                            *\n");

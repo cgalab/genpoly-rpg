@@ -44,10 +44,6 @@ enum t_calcType {
   FOREACH_CALCTYPE(GENERATE_ENUM)
 };
 
-static const char *CALCTYPE_STRING[] = {
-  FOREACH_CALCTYPE(GENERATE_STRING)
-};
-
 
 /********************************************************************/
 /*                                                                  */

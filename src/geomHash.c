@@ -11,7 +11,7 @@
 #include "geomHash.h"
 #include "edgeIncArray.h"
 
-static struct lineElement *lineElement_freelist = NULL;  // Freie lineElemente
+static struct lineElement *lineElement_freelist = NULL;
 static int maxlineElements_inUse = 0;  
 static int maxUsed = 0;  
 static int *sectors=NULL;  
@@ -134,10 +134,11 @@ int checkEnd(int xs, int ys, int xend, int yend, int quadrant)
 
 int mapCoordinate (int x, int y, int sect_size) 
 {
-   int tx, ty, _ty;  
-   tx = x;  
-   ty = y * sect_size;  
-   return tx+ty;  
+   //int tx, ty;  
+   //tx = x;  
+   //ty = y * sect_size;  
+   //return tx+ty;  
+   return (x + y * sect_size);
 }
 
 
@@ -295,13 +296,9 @@ void GHsetLine(hashSector **hsecs, int *numDirty, hashSector *hash,  nodeList *d
                int sect_size) 
 {
    int sects, i;   
-   int *tmp;  
-   listNode *ltmp, *htmp, *ret, *oldret;  
    struct lineElement *lE;  
    
-   if (p1.x > -1) {	
-      ltmp = NLGetIter(line->sectors);  
-      
+   if (p1.x > -1.0) {	      
       line->x1 = p1.x;  
       line->y1 = p1.y;  
       line->x2 = p2.x;  
@@ -311,8 +308,7 @@ void GHsetLine(hashSector **hsecs, int *numDirty, hashSector *hash,  nodeList *d
       
       for (i=0;  i<sects;  i++) {
          lE = lineElement_new (point1, point2, line);  
-         ret = NLAdd(&(hash[sectors[i]].lines), lE);  
-         ltmp = NLGetIter(&hash[sectors[i]].lines);  	
+         NLAdd(&(hash[sectors[i]].lines), lE);  
          
          if (NLsizeOf(&(hash[sectors[i]].lines)) > 1 && !hash[sectors[i]].dirty) {
             hash[sectors[i]].dirty = 1;  // Mark the Sector as dirty
@@ -384,7 +380,7 @@ int maxUsedEL()
 }
 
 
-int allocSectorArray(int sect_size) 
+void allocSectorArray(int sect_size) 
 {
    //3mal weil wir wenn wir über die Ecke gehen auch die Diagonalen mitnehmen
    sectors = (int *)malloc(6*sect_size*sizeof(int));  

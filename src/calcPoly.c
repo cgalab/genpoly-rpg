@@ -24,7 +24,6 @@
 
 static enum t_calcType CPstate = CP_IDLE;  
 static int CPparameter = RPG_UNDEFINED;  
-static int MCP = FALSE;  
 
 /********************************************************************/
 /*                                                                  */

@@ -22,7 +22,7 @@ typedef struct nodeList{
 
 
 void NLInit(nodeList *list);  
-listNode *NLAdd(nodeList *list, void *data);  
+void NLAdd(nodeList *list, void *data);  
 void NLDel(nodeList *list, void *data);  
 void *NLGet(nodeList *list, int index);  
 listNode *NLInsert(nodeList *list, listNode *node, void *data);  

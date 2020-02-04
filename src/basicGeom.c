@@ -250,14 +250,12 @@ int isectOrderedSegments(t_point line1point1, t_point line1point2,
    int posL1P1, posL1P2, posL2P1, posL2P2;  
    int res1, res2;  
    int result;  
-   double xmin1, xmin2, xmax1, xmax2, ymin1, ymin2, ymax1, ymax2;  
+   double xmin2, xmax1, ymin1, ymin2, ymax1, ymax2;  
    
    /* we can take the x minima and maxima directly, since our points
       are ordered */
-   xmin1 = line1point1.x;  
    xmax1 = line1point2.x;  
    xmin2 = line2point1.x;  
-   xmax2 = line2point2.x;  
    
    /* now compute the y minima and maxima */
    if (line1point1.y < line1point2.y)  {

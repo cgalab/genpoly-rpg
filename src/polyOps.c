@@ -222,8 +222,6 @@ void YOsearchPoly(t_pointList *pList)
 
 void YOtriangPoly(int nrOfVertices, t_pointList *pList)
 {
-   char msg[255];  
-   
    BPfree(&aPolygon);  
    PAfreeArray(&pArray);  
    
@@ -273,7 +271,7 @@ void YOwritePoly(char *fileName)
 void YOwriteLine(char *fileName)
 {
    int count, i;  
-   t_point min, max, curPoint;  
+   t_point curPoint;  
    FILE *vFile;  
    t_polygon *myPolygon;  
    
