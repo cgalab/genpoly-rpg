@@ -123,29 +123,31 @@ int main(int argc, char *argv[])
    YOinit();  
    
    /*                                                                        */
-   /* read input file it it was specified                                    */
-   /*                                                                        */
-   if (strlen(inFile) > 0)
-      POloadPoints(inFile);  
-   
-   /*                                                                        */
    /* initialize random-number generator                                     */
    /*                                                                        */
    if (seed < 0) {
      seed = 1;
    }
    srand48(seed);
-   
-   /*                                                                        */
-   /* generate the specified number of random points                         */
-   /*                                                                        */
-   if (cluster > 0)
-      POgenerateClusterPoints(nrOfPoints);  
-   else if (nrOfPoints > 0)
-      POgenerateRandomPoints(nrOfPoints);  
-   else if (nrOfPoints < 0) {
-      nrOfPoints = -nrOfPoints;  
-      POgenerateRandomCirclePoints(nrOfPoints);  
+
+   if (strlen(inFile) > 0) {
+      /*                                                                     */
+      /* read input file it it was specified                                 */
+      /*                                                                     */
+      POloadPoints(inFile);  
+   }
+   else {
+      /*                                                                     */
+      /* generate the specified number of random points                      */
+      /*                                                                     */
+      if (cluster > 0)
+         POgenerateClusterPoints(nrOfPoints);  
+      else if (nrOfPoints > 0)
+         POgenerateRandomPoints(nrOfPoints);  
+      else if (nrOfPoints < 0) {
+         nrOfPoints = -nrOfPoints;  
+         POgenerateRandomCirclePoints(nrOfPoints);  
+      }
    }
    
    /*                                                                        */

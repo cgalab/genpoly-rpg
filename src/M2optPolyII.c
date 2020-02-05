@@ -390,6 +390,8 @@ void new2optPoly(t_polygon *aPolygon, t_pointArray *pArray, int nrOfPolys,
             printf("ERROR! POLYGON NOT SIMPLE!\n");  
             //exit(1);  
          }
+         /*
+         */
       }
    }
 }
@@ -438,8 +440,10 @@ void MnewDo2optMoves(t_polygon *aPolygon, t_pointArray *pArray, int nrOfPoints,
          no_work = 0;
          li1next = li2 = li1->next;  
          
-         if (EAvalidateEdge(&edgeArray, ((lineElement *)li1->data)->lc->lineNumber +1, 
-                            ((lineElement *)li1->data)->p1, ((lineElement *)li1->data)->p2) == 0) {
+         if (EAvalidateEdge(&edgeArray, 
+                            ((lineElement *)li1->data)->lc->lineNumber+1, 
+                            ((lineElement *)li1->data)->p1, 
+                            ((lineElement *)li1->data)->p2) == 0) {
             //debug//									printf ("   Delete First: %i\n", ((lineElement *)li1->data)->lc->lineNumber +1);  				
             
             lineElement_del((lineElement *)li1->data);  
@@ -451,8 +455,10 @@ void MnewDo2optMoves(t_polygon *aPolygon, t_pointArray *pArray, int nrOfPoints,
                li2next = li2->next;  
                
                /* check whether the Edge is out of date */				
-               if (EAvalidateEdge(&edgeArray, ((lineElement *)li2->data)->lc->lineNumber+1 , 
-                                  ((lineElement *)li2->data)->p1, ((lineElement *)li2->data)->p2)==0) {
+               if (EAvalidateEdge(&edgeArray, 
+                                  ((lineElement *)li2->data)->lc->lineNumber+1,
+                                  ((lineElement *)li2->data)->p1, 
+                                  ((lineElement *)li2->data)->p2)==0) {
                   //debug//   							  printf ("  Delete Second: %i\n", ((lineElement *)li2->data)->lc->lineNumber +1);  				
                   if (li1next==li2) {
                      //If we deleted the Upcoming First_Element we have to set it to the next
@@ -467,7 +473,8 @@ void MnewDo2optMoves(t_polygon *aPolygon, t_pointArray *pArray, int nrOfPoints,
                   //debug// 									printf ("  Second: %i\n", ((lineElement *)li2->data)->lc->lineNumber +1);  				
                   count = ((lineElement *)li1->data)->lc->lineNumber +1;  
                   count2 = ((lineElement *)li2->data)->lc->lineNumber +1;  
-                  checkAndUntangle(&edgeArray, &isectArray, &isectCount, &lPoly, pArray, 
+                  checkAndUntangle(&edgeArray, &isectArray, &isectCount, 
+                                   &lPoly, pArray, 
                                    nrOfPoints, count, count2);  
                   li2 = li2->next;  
                }

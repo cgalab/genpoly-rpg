@@ -52,9 +52,9 @@ void OWipe(char *outFile)
 void OWwrite(char *outFile, int format)
 {
    if ((strlen(outFile) > 0)  &&  (strcasecmp(outFile, "none") != 0)) {
-     if (format == IPE)        OWipe(outFile);  
-     else if (format == LINE)  YOwriteLine(outFile);  
-    }
+      if (format == IPE)        OWipe(outFile);  
+      else if (format == LINE)  YOwriteLine(outFile);  
+   }
 }
 
 

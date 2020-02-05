@@ -96,19 +96,20 @@ int PAreadFromFile(t_pointArray *anArray, FILE *inputFile)
    double x, y;  
    unsigned int nrOfPoints;  
    t_point *current;
-   int count;  
-   
+   int count = 0;  
+
    if (EOF == fscanf(inputFile, "%u", &nrOfPoints))  return FALSE;
    
    PAfreeArray(anArray);  
    PAinitArray(anArray, nrOfPoints);   
    
    if (EOF == fscanf(inputFile, "%lf %lf", &x, &y))  return FALSE;
-   (anArray->array)->x = x;  
-   (anArray->array)->y = y;  
+   current = anArray->array+count;
+   current->x = current->x_ori = x;  
+   current->y = current->y_ori = y;  
    xmin = xmax = x;
    ymin = ymax = y;
-   
+
    for (count = 1;  count < nrOfPoints;  count++)  {
       if (EOF == fscanf(inputFile, "%lf %lf", &x, &y))  return FALSE;
       current = anArray->array+count;
@@ -313,6 +314,10 @@ int PAisectSegments(t_pointArray *anArray, int indexl1p1,
    maxL1 = MAX(indexl1p1, indexl1p2);  
    minL2 = MIN(indexl2p1, indexl2p2);  
    maxL2 = MAX(indexl2p1, indexl2p2);  
+
+   if (maxL1 <= minL2) return FALSE;
+   if (maxL2 <= minL1) return FALSE;
+
    l1p1 = PAgetPoint(anArray, minL1);  
    l1p2 = PAgetPoint(anArray, maxL1);  
    l2p1 = PAgetPoint(anArray, minL2);  
