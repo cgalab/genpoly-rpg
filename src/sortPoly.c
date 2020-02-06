@@ -71,7 +71,7 @@ int boComparePoints(const void *elem1, const void *elem2)
       basePoint = SPcompPoint;  
       firstPoint = PAgetPoint(SPpointArray, indexOne);  
       
-      /* we need special handling for points that are colinear with 
+      /* we need special handling for points that are collinear with 
          the base point and the first point! */
       if (first ||
           (isOnLine(basePoint, firstPoint, point1) == 1) ||

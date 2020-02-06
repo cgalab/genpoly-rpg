@@ -10,7 +10,7 @@
 #include "error.h"
 #include <stdio.h>
 
-/* if you dont want the memory allocation counter to be printed, 
+/* if you don't want the memory allocation counter to be printed, 
    define the following constant */
 #define MEM_COUNT /**/
 #undef MEM_COUNT /**/

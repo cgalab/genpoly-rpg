@@ -92,7 +92,7 @@ int PAwriteToFile(t_pointArray *anArray, FILE *outputFile)
 int PAreadFromFile(t_pointArray *anArray, FILE *inputFile)
 {
    double xmin, xmax, ymin, ymax;
-   double scale = 1.0, xscale = 1.0, yscale = 1.0;  
+   double scale = 1.0, xscale = 1.0, yscale = 1.0, shift = 8192.0;  
    double x, y;  
    unsigned int nrOfPoints;  
    t_point *current;
@@ -121,13 +121,21 @@ int PAreadFromFile(t_pointArray *anArray, FILE *inputFile)
       else if (y > ymax) ymax = y;
    }
 
-   if (!(deltaAbs(xmin-X_MIN) && deltaAbs(xmax-X_MAX) &&
-         deltaAbs(ymin-Y_MIN) && deltaAbs(ymax-Y_MAX))) {
+   xmin -= DELTA;
+   ymin -= DELTA;
+   xmax += DELTA;
+   ymax += DELTA;
+
+   if ((xmin < X_MIN)  ||  (xmax > X_MAX)  ||  
+       (ymin < Y_MIN)  ||  (ymax > Y_MAX)) {
       xscale = (X_MAX-X_MIN)/(xmax-xmin);  
       yscale = (Y_MAX-Y_MIN)/(ymax-ymin);  
       if (xscale <= yscale) scale = xscale;
       else                  scale = yscale; 
-      
+
+      while (shift > scale)  shift /= 2.0;  
+      scale = shift;
+
       for (count = 0;  count < nrOfPoints;  count++)  {
          current = anArray->array+count;
          current->x = (current->x - xmin) * scale + X_MIN;  
@@ -315,9 +323,12 @@ int PAisectSegments(t_pointArray *anArray, int indexl1p1,
    minL2 = MIN(indexl2p1, indexl2p2);  
    maxL2 = MAX(indexl2p1, indexl2p2);  
 
+   //printf("PAisectSegments():\n");
+   //printf("(%d-->%d) vs (%d-->%d)\n", minL1, maxL1, minL2, maxL2);
+
    if (maxL1 <= minL2) return FALSE;
    if (maxL2 <= minL1) return FALSE;
-
+   
    l1p1 = PAgetPoint(anArray, minL1);  
    l1p2 = PAgetPoint(anArray, maxL1);  
    l2p1 = PAgetPoint(anArray, minL2);  

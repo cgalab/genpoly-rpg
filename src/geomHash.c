@@ -24,9 +24,12 @@ int lineSects(double x1, double y1, double x2, double y2, int *sectors,
    int xsector, ysector, xend, yend;  
    double xg, yg, det;  
    int quadrant, steps = 0, running;  
+   int sect_size2;
+
    dx = x2 - x1;  
    dy = y2 - y1;  
-   
+   sect_size2 = sect_size * sect_size;
+
    if ((x1 >= 0.0)  &&  (x1 <= 1.0)  &&  (x2 >= 0.0)  &&  (x2 <= 1.0)  && 
        (y1 >= 0.0)  &&  (y1 <= 1.0)  &&  (y2 >= 0.0)  &&  (y2 <= 1.0)) {
       xsector = (int)(x1*sect_size);  
@@ -38,7 +41,7 @@ int lineSects(double x1, double y1, double x2, double y2, int *sectors,
       quadrant = getQuadrant (dx, dy);  
       
       tmp = mapCoordinate(xsector, ysector, sect_size);  
-      if ((tmp >= 0)   &&  (tmp < sect_size*sect_size))  sectors[steps++] = tmp;  
+      if ((tmp >= 0)   &&  (tmp < sect_size2))  sectors[steps++] = tmp;  
       
       running=checkEnd(xsector, ysector, xend, yend, quadrant);   
       
@@ -50,16 +53,16 @@ int lineSects(double x1, double y1, double x2, double y2, int *sectors,
 		 
          if (quadrant == 0) {
             if (det > DELTA)
-               ysector = ysector -1;  
+               ysector = ysector - 1;  
             else if (det < -DELTA)
-               xsector = xsector -1;  
+               xsector = xsector - 1;  
             else {
-               xsector = xsector -1;  
-               ysector = ysector -1;  
+               xsector = xsector - 1;  
+               ysector = ysector - 1;  
                tmp = mapCoordinate(xsector+1, ysector, sect_size);  
-               if ( tmp>=0 && tmp < sect_size*sect_size) sectors[steps++] = tmp;  
+               if ( tmp>=0 && tmp < sect_size2) sectors[steps++] = tmp;  
                tmp = mapCoordinate(xsector, ysector+1, sect_size);  
-               if ( tmp>=0 && tmp < sect_size*sect_size) sectors[steps++] = tmp;  
+               if ( tmp>=0 && tmp < sect_size2) sectors[steps++] = tmp;  
             }
          }
          else if (quadrant == 1) {
@@ -71,9 +74,9 @@ int lineSects(double x1, double y1, double x2, double y2, int *sectors,
                xsector = xsector -1;  
                ysector = ysector +1;  
                tmp = mapCoordinate(xsector+1, ysector, sect_size);  
-               if ( tmp>=0 && tmp < sect_size*sect_size) sectors[steps++] = tmp;  
+               if ( tmp>=0 && tmp < sect_size2) sectors[steps++] = tmp;  
                tmp = mapCoordinate(xsector, ysector-1, sect_size);  
-               if ( tmp>=0 && tmp < sect_size*sect_size) sectors[steps++] = tmp;  
+               if ( tmp>=0 && tmp < sect_size2) sectors[steps++] = tmp;  
             }
          }
          else if (quadrant == 2) {
@@ -85,9 +88,9 @@ int lineSects(double x1, double y1, double x2, double y2, int *sectors,
                xsector = xsector +1;  
                ysector = ysector +1;  
                tmp = mapCoordinate(xsector-1, ysector, sect_size);  
-               if ( tmp>=0 && tmp < sect_size*sect_size) sectors[steps++] = tmp;  
+               if ( tmp>=0 && tmp < sect_size2) sectors[steps++] = tmp;  
                tmp = mapCoordinate(xsector, ysector-1, sect_size);  
-               if ( tmp>=0 && tmp < sect_size*sect_size) sectors[steps++] = tmp;  
+               if ( tmp>=0 && tmp < sect_size2) sectors[steps++] = tmp;  
             }
          }
          else if (quadrant == 3) {
@@ -99,23 +102,23 @@ int lineSects(double x1, double y1, double x2, double y2, int *sectors,
                xsector = xsector +1;  
                ysector = ysector -1;  
                tmp = mapCoordinate(xsector-1, ysector, sect_size);  
-               if ( tmp>=0 && tmp < sect_size*sect_size) sectors[steps++] = tmp;  
+               if ( tmp>=0 && tmp < sect_size2) sectors[steps++] = tmp;  
                tmp = mapCoordinate(xsector, ysector+1, sect_size);  
-               if ( tmp>=0 && tmp < sect_size*sect_size) sectors[steps++] = tmp;  
+               if ( tmp>=0 && tmp < sect_size2) sectors[steps++] = tmp;  
             }
          }
          
          running=checkEnd(xsector, ysector, xend, yend, quadrant);   
          
          tmp = mapCoordinate(xsector, ysector, sect_size);  
-         if ( tmp>=0 && tmp < sect_size*sect_size) sectors[steps++] = tmp;  
+         if ( tmp>=0 && tmp < sect_size2) sectors[steps++] = tmp;  
          
       }
       tmp = mapCoordinate(xsector, ysector, sect_size);  
-      if ( tmp>=0 && tmp < sect_size*sect_size) sectors[steps++] = tmp;  
+      if ( tmp>=0 && tmp < sect_size2) sectors[steps++] = tmp;  
 
    }
-  
+
    return steps;  
 }
 
@@ -144,7 +147,7 @@ int mapCoordinate (int x, int y, int sect_size)
 
 double det3Point(double x1, double y1, double x2, double y2, double x3, double y3) 
 {
-   return (x2-x1)*(y3-y1) - (y2-y1)*(x3-x1);  
+   return ((x2-x1)*(y3-y1) - (y2-y1)*(x3-x1));  
 }
 
 void getGridPoint(int quadrant, int xsector, int ysector, double *x, double *y, int sect_size) 
@@ -209,6 +212,7 @@ nodeList *GHgetPossibleIntersects (hashSector *hash, lineContainer *line)
 {	
    listNode *ltmp, *htmp, *ret, *oldret;  
    nodeList *tmp=(nodeList *)malloc(sizeof(struct nodeList));  
+
    NLInit(tmp);  
    
    //	printf ("looking for sectors we (%d) are in\n", line->lineNumber);  
@@ -233,9 +237,10 @@ nodeList *GHgetPossibleIntersects (hashSector *hash, lineContainer *line)
                      oldret = ret;  
                   } while ((ret = ret->next) != NULL);  
                   
-                  if (ret == NULL || *(int*)(ret->data) < ((lineContainer *)htmp->data)->lineNumber) {
+                  if (ret == NULL || 
+                      *(int*)(ret->data) < ((lineContainer *)htmp->data)->lineNumber) {
                      if (oldret == NULL) { 
-                        NLAdd(tmp, &((lineContainer *)htmp->data)->lineNumber);  
+                        NLAdd(tmp, &((lineContainer *)htmp->data)->lineNumber);
                      }
                      else if (*(int*)(oldret->data) > ((lineContainer *)htmp->data)->lineNumber) {
                         NLInsert(tmp, oldret, &((lineContainer *)htmp->data)->lineNumber);  
@@ -267,7 +272,8 @@ void GHsortedInsert(nodeList *list, lineContainer *line)
    //	oltmp = NLGetIter(&(line->sectors));  
    
    ltmp = NLGetIter(list);  
-   if (ltmp == NULL ||	((lineContainer *)ltmp->data)->lineNumber < line->lineNumber) {
+   if (ltmp == NULL ||	
+       ((lineContainer *)ltmp->data)->lineNumber < line->lineNumber) {
       //		printf ("First Element\n");  
       NLAdd (list, line);  	
    }
@@ -291,8 +297,9 @@ void GHsortedInsert(nodeList *list, lineContainer *line)
 }
 
 
-void GHsetLine(hashSector **hsecs, int *numDirty, hashSector *hash,  nodeList *dirtySectors, 
-               lineContainer *line, int index, t_point p1, t_point p2, int point1, int point2, 
+void GHsetLine(hashSector **hsecs, int *numDirty, hashSector *hash,  
+               nodeList *dirtySectors, lineContainer *line, int index, 
+               t_point p1, t_point p2, int point1, int point2, 
                int sect_size) 
 {
    int sects, i;   
@@ -310,7 +317,8 @@ void GHsetLine(hashSector **hsecs, int *numDirty, hashSector *hash,  nodeList *d
          lE = lineElement_new (point1, point2, line);  
          NLAdd(&(hash[sectors[i]].lines), lE);  
          
-         if (NLsizeOf(&(hash[sectors[i]].lines)) > 1 && !hash[sectors[i]].dirty) {
+         if (NLsizeOf(&(hash[sectors[i]].lines)) > 1 && 
+             !hash[sectors[i]].dirty) {
             hash[sectors[i]].dirty = 1;  // Mark the Sector as dirty
             hsecs[*numDirty]=&(hash[sectors[i]]);  
             *numDirty = *numDirty + 1;  
@@ -322,7 +330,8 @@ void GHsetLine(hashSector **hsecs, int *numDirty, hashSector *hash,  nodeList *d
 
 struct lineElement *lineElement_new(int p1, int p2, struct lineContainer *lc) 
 {
-   struct lineElement *el;  
+   struct lineElement *el; 
+ 
    if (lineElement_freelist != NULL) {
       el = lineElement_freelist;  
       lineElement_freelist = lineElement_freelist->nextHook;  

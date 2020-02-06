@@ -42,6 +42,10 @@ and y-coordinates, with one pair of coordinates per vertex. Please note that
 the first vertex of each polygon is counted and out twice, once at the
 beginning of the vertex list and once at the end of the vertex list.
 
+Please note that the code might end up with fewer holes than requested by the
+user. Furthermore, please be warned that it might generate degenerate
+(zero-area) holes if the input contains multiple collinear points.
+
 Please see the following publication for details on the algorithms:
 
    Thomas Auer and Martin Held.

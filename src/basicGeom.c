@@ -206,7 +206,7 @@ int isOnOrderedLine(t_point linePoint1, t_point linePoint2, t_point aPoint)
   else if (area < -DELTA)
     res = -1;  
   else 
-    res=0;  
+    res = 0;  
 
   return(res);  
 }
@@ -277,12 +277,13 @@ int isectSegments(t_point line1point1, t_point line1point2,
 int isectOrderedSegments(t_point line1point1, t_point line1point2, 
                          t_point line2point1, t_point line2point2)
 {
-   /* OPTIMIZE THIS ROUTINE! USE INDICES! */
-   
    int posL1P1, posL1P2, posL2P1, posL2P2;  
    int res1, res2;  
    int result;  
 
+   //printf("isectOrderedSegments():\n");
+   //printf("(%f,%f))-->(%f,%f)\n", line1point1.x, line1point1.y, line1point2.x, line1point2.y);
+   //printf("(%f,%f))-->(%f,%f)\n", line2point1.x, line2point1.y, line2point2.x, line2point2.y);
    /* determine where the points of line1 lie with respect to line2 */
    posL1P1 = isOnLine(line2point1, line2point2, line1point1);  
    posL1P2 = isOnLine(line2point1, line2point2, line1point2);  
@@ -305,17 +306,19 @@ int isectOrderedSegments(t_point line1point1, t_point line1point2,
          /* we have intersection */
          result = TRUE;  
       
-      /* test for colinearity */
+      /* test for collinearity */
       else if ((posL1P1 + 2*posL1P2 + 4*posL2P1 + 8*posL2P2) == 0)
-         /* We have colinearity */
+         /* We have collinearity */
          /* since we have l1p1 < l1p2, l2p1 < l2p2 and further
             l1p1 <= l2p1, all we have to check is whether l2p1 < l1p2, 
             if yes, the lines overlap! */
-         result = compPoints(line2point1, line1point2);  
+         /* we ignore collinearities for the moment, though! */
+         //result = compPoints(line2point1, line1point2);  
+         result = 0;
       
+      else
       /* One point lies on the other line, e.g. a on (c, d). If
          a!=c and a!=d we have intersection */
-      else
          result = (!equalPoints(line1point1, line2point1) &&
                    !equalPoints(line1point1, line2point2) &&
                    !equalPoints(line1point2, line2point1) &&
@@ -350,7 +353,8 @@ int testDelta(double compVal, double delta)
   int result;  
 
   if (delta > 0.0)
-    result = (fabs(compVal) < delta*MAX(X_MAX, Y_MAX));  
+     //result = (fabs(compVal) < delta*MAX(X_MAX, Y_MAX));  
+     result = (fabs(compVal) < delta);
   else
     result = (fabs(compVal) == 0.0);  
 

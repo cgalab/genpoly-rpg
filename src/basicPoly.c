@@ -28,102 +28,95 @@
 
 void BPinit(t_polygon *aPolygon, int nrOfPoints)
 {
-  if (nrOfPoints > 0)
-    IAinit((t_intArray*)aPolygon, nrOfPoints);  
-  else
-    aPolygon->nrOfInts = 0;  
+   if (nrOfPoints > 0)
+      IAinit((t_intArray*)aPolygon, nrOfPoints);  
+   else
+      aPolygon->nrOfInts = 0;  
 }
 
 void BPrandomPerm(t_polygon *aPolygon)
 {
-  int count, swapIndex;  
-
-  for (count=1;  count<=BPsizeOf(aPolygon);  count++)
-    BPsetPIndex(aPolygon, count, count);  
-    
-  for (count=1;  count<BPsizeOf(aPolygon);  count++)
-    {
+   int count, swapIndex;  
+   
+   for (count=1;  count<=BPsizeOf(aPolygon);  count++)
+      BPsetPIndex(aPolygon, count, count);  
+   
+   for (count=1;  count<BPsizeOf(aPolygon);  count++) {
       swapIndex = randomInt(count, BPsizeOf(aPolygon));  
       BPswap(aPolygon, count, swapIndex);  
-    }
+   }
 }
 
 void BPswap(t_polygon *aPolygon, int index1, int index2)
 {
-  int auxPIndex;  
-
-  if ((index1 != index2) && (MIN(index1, index2) > 0) &&
-      (MAX(index1, index2) <= BPsizeOf(aPolygon)))
-    {
+   int auxPIndex;  
+   
+   if ((index1 != index2) && (MIN(index1, index2) > 0) &&
+       (MAX(index1, index2) <= BPsizeOf(aPolygon))) {
       auxPIndex = BPgetPIndex(aPolygon, index1);  
       BPsetPIndex(aPolygon, index1, BPgetPIndex(aPolygon, index2));  
       BPsetPIndex(aPolygon, index2, auxPIndex);  
-    }
+   }
 }
 
 int BPisCCW(t_polygon *aPolygon, t_pointArray *pArray)
 {
-  int result = TRUE;  
-  
-  /* check whether we have cw or ccw order */
-  if (PAisOnLine(pArray, BPgetPIndex(aPolygon, BPsizeOf(aPolygon)), 1, 
-		 BPgetPIndex(aPolygon, 2)) == -1)
-    result = FALSE;  
-  
-  return(result);  
+   int result = TRUE;  
+   
+   /* check whether we have cw or ccw order */
+   if (PAisOnLine(pArray, BPgetPIndex(aPolygon, BPsizeOf(aPolygon)), 1, 
+                  BPgetPIndex(aPolygon, 2)) == -1)
+      result = FALSE;  
+   
+   return(result);  
 }
 
 void BPnormalize(t_polygon *aPolygon, t_pointArray *pArray)
 {
-  int count;  
-  t_linkPoly lPoly;  
-  
-  if (BPsizeOf(aPolygon) > 0)
-      {
-	/* first, let's check whether the first point has index 1 */
-	if (BPgetPIndex(aPolygon, 1) != 1)
-	  {
-	    /* copy to a link polygon and back! */
-	    LPfromPoly(&lPoly, aPolygon);  
-	    BPfree(aPolygon);  
-	    LPtoPoly(&lPoly, aPolygon);  
-	    LPfree(&lPoly);  
+   int count;  
+   t_linkPoly lPoly;  
+   
+   if (BPsizeOf(aPolygon) > 0) {
+      /* first, let's check whether the first point has index 1 */
+      if (BPgetPIndex(aPolygon, 1) != 1) {
+         /* copy to a link polygon and back! */
+         LPfromPoly(&lPoly, aPolygon);  
+         BPfree(aPolygon);  
+         LPtoPoly(&lPoly, aPolygon);  
+         LPfree(&lPoly);  
 	  }
-
-	/* check whether we have cw or ccw order */
-	if (!BPisCCW(aPolygon, pArray))
-	  {
-	    /* the polygon is in cw order, change that to ccw order! */
-	    for (count=2;  count<=((BPsizeOf(aPolygon)+1)/2);  count++)
-	      BPswap(aPolygon, count, (BPsizeOf(aPolygon)+2-count));  
+      
+      /* check whether we have cw or ccw order */
+      if (!BPisCCW(aPolygon, pArray)) {
+         /* the polygon is in cw order, change that to ccw order! */
+         for (count=2;  count<=((BPsizeOf(aPolygon)+1)/2);  count++)
+            BPswap(aPolygon, count, (BPsizeOf(aPolygon)+2-count));  
 	  }
-      }
+   }
 }
-     
+
 int BPisSimple(t_polygon *aPolygon, t_pointArray *pArray)
 {
-  int simplePoly, nrOfPoints, count, count2;  
-  int e2PIndex2;  
-
-  /* now we have a polygon, check whether it is simple! */
-  simplePoly = TRUE;  
-  
-  nrOfPoints = BPsizeOf(aPolygon);  
-  
-  count = 1;  
-  while (simplePoly && (count < nrOfPoints))
-    {
+   int simplePoly, nrOfPoints, count, count2;  
+   int e2PIndex2;  
+   
+   /* now we have a polygon, check whether it is simple! */
+   simplePoly = TRUE;  
+   
+   nrOfPoints = BPsizeOf(aPolygon);  
+   
+   count = 1;  
+   while (simplePoly && (count < nrOfPoints)) {
       count2 = count+1;  
-      while (simplePoly && (count2 <= nrOfPoints))
-	{
-	  e2PIndex2 = (count2%nrOfPoints)+1;  
-	  simplePoly = 
-	    (!PAisectSegments(pArray, BPgetPIndex(aPolygon, count), 
-			      BPgetPIndex(aPolygon, count+1), 
-			      BPgetPIndex(aPolygon, count2), 
-			      BPgetPIndex(aPolygon, e2PIndex2)));  
-	  count2++;  
-	}
+      while (simplePoly && (count2 <= nrOfPoints)) {
+         e2PIndex2 = (count2%nrOfPoints)+1;  
+         simplePoly = 
+            (!PAisectSegments(pArray, BPgetPIndex(aPolygon, count), 
+                              BPgetPIndex(aPolygon, count+1), 
+                              BPgetPIndex(aPolygon, count2), 
+                              BPgetPIndex(aPolygon, e2PIndex2)));  
+         count2++;  
+      }
       count++;  
     }
 

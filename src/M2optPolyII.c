@@ -40,6 +40,172 @@ static unsigned long optIICount;
 /* Procedures and functions                                         */
 /*                                                                  */
 /********************************************************************/
+
+int idComp(const void *a, const void *b)
+{
+   if (*((int*)a) < *((int*)b))
+      return -1;
+   else if (*((int*)a) > *((int*)b))
+      return  1;
+   else {
+      return  0;
+   }
+}
+
+inline void incrIndex(int *ind, int nrOfPoints)
+{
+   if (*ind == nrOfPoints) *ind = 1;
+   else                    ++(*ind);
+
+   return;
+}
+
+
+void handleReversal(t_polygon *aPolygon, int start, int end)
+{
+   int nrOfPoints;
+   int *pntIDs = (int*) NULL;
+   int nrOfPntIDs = 0;
+   int ind, cntr = 0, mid;
+
+   nrOfPoints = BPsizeOf(aPolygon);  
+  
+   /*                                                                         */
+   /* allocate space for the point ids                                        */
+   /*                                                                         */
+   if (start > end)  nrOfPntIDs = end - start + 1 + nrOfPoints;
+   else              nrOfPntIDs = end - start + 1;
+   pntIDs = (int *) ercalloc(nrOfPntIDs, sizeof(int));
+
+   /*                                                                         */
+   /* obtain point ids                                                        */
+   /*                                                                         */
+   if (start > end) {
+      for (ind = start;  ind <= nrOfPoints;  ++ind) {
+         pntIDs[cntr] =  BPgetPIndex(aPolygon, ind);
+         ++cntr;
+      }
+      mid = 1;
+   }
+   else {
+      mid = start;
+   }
+   for (ind = mid;  ind <= end;  ++ind) {
+      pntIDs[cntr] =  BPgetPIndex(aPolygon, ind);
+      ++cntr;
+   }
+
+   /*
+   if (cntr != nrOfPntIDs) {
+      printf("handleReversal: numbers don't match!\n");
+      exit(1);
+   }
+   int i;
+   for (i = 0;  i < nrOfPntIDs;  ++i) 
+      printf("pntIDs[%2d] = %2d\n", i, pntIDs[i]);
+   */
+   
+   /*                                                                         */
+   /* sort point ids. recall: a sorted order of the point ids corresponds to  */
+   /* a lexicographical order of the points.                                  */
+   /*                                                                         */
+   qsort(pntIDs, nrOfPntIDs, sizeof(int), idComp);
+
+   /*
+   printf("after sorting\n");
+   for (i = 0;  i < nrOfPntIDs;  ++i) 
+      printf("pntIDs[%2d] = %2d\n", i, pntIDs[i]);
+   */
+
+   /*                                                                         */
+   /* restore point ids                                                       */
+   /*                                                                         */
+   cntr = 0;
+   if (start > end) {
+      for (ind = start;  ind <= nrOfPoints;  ++ind) {
+         BPsetPIndex(aPolygon, ind, pntIDs[cntr]);
+         ++cntr;
+      }
+      mid = 1;
+   }
+   else {
+      mid = start;
+   }
+   for (ind = mid;  ind <= end;  ++ind) {
+      BPsetPIndex(aPolygon, ind, pntIDs[cntr]);
+      ++cntr;
+   }
+
+   erfree(pntIDs);
+ 
+   return;
+}
+
+
+int collinearitiesResolved(t_polygon *aPolygon, t_pointArray *pArray)
+{
+   int nrOfPoints, ind1, ind2, ind3;
+   int i1, i2, i3;
+   t_point p1, p2, p3;
+   int keep_going = TRUE;
+   int cr = FALSE;
+   int start = -1;
+   int collinear = FALSE;
+   int reversal = FALSE;
+
+   nrOfPoints = BPsizeOf(aPolygon);  
+   ind1 = 1;  
+   ind2 = 2;
+   ind3 = 2;
+   i1   = BPgetPIndex(aPolygon, ind1);
+   p1   = PAgetPoint(pArray, i1);
+   i3   = BPgetPIndex(aPolygon, ind2);
+   p3   = PAgetPoint(pArray, i3);
+   while (keep_going  ||  collinear) {
+      i2   = i3;
+      p2   = p3;
+      incrIndex(&ind3, nrOfPoints);
+      i3   = BPgetPIndex(aPolygon, ind3);
+      p3   = PAgetPoint(pArray, i3);
+      /*
+      printf("checking (%f,%f)=%d relative to\n", p3.x, p3.y, i3);
+      printf("(%f,%f)=%d and (%f,%f)=%d\n", p1.x, p1.y, i1, p2.x, p2.y, i2); 
+      */
+      if (0 == isOnLine(p1, p2, p3)) {
+         collinear = TRUE;
+         if (start == -1) start = ind1;
+         //printf("%d, %d, %d are collinear\n", i1, i2, i3);
+         if (((i1 < i3)  &&  (i3 < i2))  ||
+             ((i1 > i3)  &&  (i3 > i2))  ||
+             ((i2 < i1)  &&  (i1 < i3))  ||
+             ((i2 > i1)  &&  (i1 > i3))) {
+             reversal = TRUE;
+         }
+      }
+      else {
+         if (collinear) {
+            if (reversal) {
+               handleReversal(aPolygon, start, ind2);
+               reversal = FALSE;
+               cr = TRUE;
+            }
+            collinear = FALSE;
+            start = -1;
+         }
+      }
+
+      incrIndex(&ind1, nrOfPoints);
+      if (ind1 == 1) keep_going = FALSE;
+      incrIndex(&ind2, nrOfPoints);
+      p1 = p2;
+      i1 = i2;
+   }
+      
+   return cr;
+}
+
+
+
 int eIndex(int pIndex1, int pIndex2, int nrOfPoints)
 {
    int index;  
@@ -113,14 +279,6 @@ void delAllIsectsII(int edge, t_pointArray *pArray,
 }
 
 
-void createAllIsectsII(int edge, t_pointArray *pArray, 
-                       t_edgeIArray *edgeArray, t_binArray *isectArray, 
-                       t_intArray *isectCount, int nrOfPoints, int *isects, 
-                       int mode) 
-{
-   //NOP
-} 
-
 
 void untangleII(int edge1, int edge2, t_edgeIArray *edgeArray, 
                 t_binArray *isectArray, t_intArray *isectCount, 
@@ -160,7 +318,7 @@ void untangleII(int edge1, int edge2, t_edgeIArray *edgeArray,
       dest2 = edge2PIndex1;  
    }
    
-   /* first case: we have colinear points where one segment 
+   /* first case: we have collinear points where one segment 
       lies completely within the other */
    /* we know that e1p1 <= e1p2, e1p1 <= e2p1, e2p1 < e2p2 
       and e1p2 < e1p1 (this is necessary for intersection!) 
@@ -325,50 +483,35 @@ void untangleII(int edge1, int edge2, t_edgeIArray *edgeArray,
 
 
 void checkAndUntangle(  t_edgeIArray *edgeArray, t_binArray *isectArray, 
-                       t_intArray *isectCount, t_linkPoly *lPoly, 
-                       t_pointArray *pArray, int nrOfPoints, int count, int count2) 
+                        t_intArray *isectCount, t_linkPoly *lPoly, 
+                        t_pointArray *pArray, int nrOfPoints, 
+                        int count, int count2) 
 {   
    int index11, index12, index21, index22;  
    
-   EAgetEdge(edgeArray, count, &index11, &index12);  
-   EAgetEdge(edgeArray, count2, &index21, &index22);  
-   
-   
-   /* If the lines intersect, we have to untangle them */
-   if (count != count2)
-      if (index11 != index21 && index11 != index22 && index12 != index21 && index21 != index22)
-         if (PAisectSegments(pArray, index11, index12, index21, index22)) {
+   if (count != count2) {
+      EAgetEdge(edgeArray, count, &index11, &index12);  
+      EAgetEdge(edgeArray, count2, &index21, &index22);  
+      
+      
+      /* If the lines intersect, we have to untangle them */
+      if (PAisectSegments(pArray, index11, index12, index21, index22)) {
+         if ((index11 != index21) && (index11 != index22) && 
+             (index12 != index21) && (index12 != index22)) {
             untangleII(count, count2, edgeArray, isectArray, isectCount, 
                        lPoly, pArray, nrOfPoints, 0, FALSE);  
          }
+      }
+   }
 }
 
-
-int check(  t_edgeIArray *edgeArray, t_binArray *isectArray, 
-            t_intArray *isectCount, t_linkPoly *lPoly, 
-            t_pointArray *pArray, int nrOfPoints, int count, int count2) 
-{   
-   int index11, index12, index21, index22, untangled;  
-   
-   EAgetEdge(edgeArray, count, &index11, &index12);  
-   EAgetEdge(edgeArray, count2, &index21, &index22);  
-   
-   untangled = 0;  
-   
-   /* If the lines intersect, we have to untangle them */
-   if (count != count2)
-      if (index11 != index21 && index11 != index22 && index12 != index21 && index21 != index22)
-         if (PAisectSegments(pArray, index11, index12, index21, index22)) {
-            untangled = 1;  
-         }
-   return untangled;  
-}
 
 
 void new2optPoly(t_polygon *aPolygon, t_pointArray *pArray, int nrOfPolys, 
                  FILE *outFile, int mode)
 {
    int nrOfPoints, polyCount;  
+   int restart = 0;
    
    /* get the number of points */
    nrOfPoints = PAnrOfPoints(pArray);  
@@ -381,16 +524,20 @@ void new2optPoly(t_polygon *aPolygon, t_pointArray *pArray, int nrOfPolys,
          BPrandomPerm(aPolygon);  
          
          /* now we have a polygon, let's make it simple! */
-         MnewDo2optMoves(aPolygon, pArray, nrOfPoints, mode);  
-         
+         do {
+            MnewDo2optMoves(aPolygon, pArray, nrOfPoints, mode);  
+            restart = collinearitiesResolved(aPolygon, pArray);
+            //if (restart) printf("collinearities resolved; need to rerun 2opt!\n");
+         } while (restart);
+
          if (outFile != NULL)
             BPwriteToFile(aPolygon, outFile);  
          
+         /*
          if (!BPisSimple(aPolygon, pArray))  {
             printf("ERROR! POLYGON NOT SIMPLE!\n");  
             //exit(1);  
          }
-         /*
          */
       }
    }
@@ -410,7 +557,6 @@ void MnewDo2optMoves(t_polygon *aPolygon, t_pointArray *pArray, int nrOfPoints,
    t_binArray isectArray;  
    t_edgeIArray edgeArray;  
    nodeList *lines;  
-   int no_work = 1;
    listNode *li1, *li2, *li1next, *li2next;  
    
    LPfromPoly(&lPoly, aPolygon);  
@@ -419,10 +565,9 @@ void MnewDo2optMoves(t_polygon *aPolygon, t_pointArray *pArray, int nrOfPoints,
    EAinitArray2(&edgeArray, nrOfPoints);  
    
    oldIndex = nrOfPoints;  
-   for (index=1;  index<=nrOfPoints;  index++) {
+   for (index = 1;  index <= nrOfPoints;  index++) {
       EAaddEdge2(&edgeArray, pArray, BPgetPIndex(aPolygon, oldIndex), 
                  BPgetPIndex(aPolygon, index));  
-      
       oldIndex = index;  
    }
    
@@ -435,9 +580,7 @@ void MnewDo2optMoves(t_polygon *aPolygon, t_pointArray *pArray, int nrOfPoints,
       lines = EAgetLinesOfDirtySector(&edgeArray, dsect);  
       li1 = NLGetIter(lines);  
       EAcleanSector(&edgeArray, dsect);  
-      no_work = 1;
       while (li1 != NULL ) {
-         no_work = 0;
          li1next = li2 = li1->next;  
          
          if (EAvalidateEdge(&edgeArray, 
@@ -460,7 +603,7 @@ void MnewDo2optMoves(t_polygon *aPolygon, t_pointArray *pArray, int nrOfPoints,
                                   ((lineElement *)li2->data)->p1, 
                                   ((lineElement *)li2->data)->p2)==0) {
                   //debug//   							  printf ("  Delete Second: %i\n", ((lineElement *)li2->data)->lc->lineNumber +1);  				
-                  if (li1next==li2) {
+                  if (li1next == li2) {
                      //If we deleted the Upcoming First_Element we have to set it to the next
                      li1next = li2next;  
                   }
@@ -482,7 +625,7 @@ void MnewDo2optMoves(t_polygon *aPolygon, t_pointArray *pArray, int nrOfPoints,
          }
          li1 = li1next;  
       }
-      if (no_work != 1)  dirty = EAhasDirtySectors(&edgeArray);  
+      dirty = EAhasDirtySectors(&edgeArray);  
    } while (dirty > 0);  
    
    /* DEBUG
