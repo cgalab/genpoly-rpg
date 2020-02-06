@@ -353,8 +353,7 @@ int testDelta(double compVal, double delta)
   int result;  
 
   if (delta > 0.0)
-     //result = (fabs(compVal) < delta*MAX(X_MAX, Y_MAX));  
-     result = (fabs(compVal) < delta);
+     result = (fabs(compVal) < delta*MAX(X_MAX, Y_MAX));  
   else
     result = (fabs(compVal) == 0.0);  
 
@@ -364,12 +363,14 @@ int testDelta(double compVal, double delta)
 /* test for less than delta (compare with constant DELTA) */
 int deltaAbs(double compVal)
 {
-  return(testDelta(compVal, DELTA));  
+   //return(testDelta(compVal, DELTA));  
+   return (fabs(compVal) <= DELTA);  
 }
 
 /* test for less than delta (compare with getDelta()) */
 int deltaVal(double compVal)
 {
-  return(testDelta(compVal, BGdelta));  
+   //return(testDelta(compVal, BGdelta));  
+   return (fabs(compVal) <= BGdelta);  
 }
       

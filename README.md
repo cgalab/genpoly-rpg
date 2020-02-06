@@ -30,7 +30,8 @@ course of the last 25 years.
     rpg --cluster 30 --algo 2opt --format line --output rpg --seed 10 --holes 2
 
 This command will cause a multiply-connected polygon with 30 vertices and with
-two holes to be written to the output file "rpg.line".
+two holes to be written to the output file "rpg.line". Please note that the
+code might end up with fewer holes than requested by the user.
 
 Permissible input files contain the number of input points in the first
 line. All other lines contain pairs of x-coordinates and y-coordinates, with
@@ -42,9 +43,10 @@ and y-coordinates, with one pair of coordinates per vertex. Please note that
 the first vertex of each polygon is counted and out twice, once at the
 beginning of the vertex list and once at the end of the vertex list.
 
-Please note that the code might end up with fewer holes than requested by the
-user. Furthermore, please be warned that it might generate degenerate
-(zero-area) holes if the input contains multiple collinear points.
+Collinear points; All algorithms except for "2opt" may behave unexpectedly if
+the input contains multiple collinear points. In particular, the code may end
+up generating degenerate (zero-area) holes or holes that overlap with the
+outer boundary polygon if the input contains multiple collinear points.
 
 Please see the following publication for details on the algorithms:
 
