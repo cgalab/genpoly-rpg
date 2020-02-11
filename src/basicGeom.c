@@ -20,7 +20,6 @@
 
 t_point BGdefaultPoint = {X_OUT, Y_OUT};  
 
-static double BGdelta = DELTA;  
 
 /********************************************************************/
 /*                                                                  */
@@ -329,25 +328,6 @@ int isectOrderedSegments(t_point line1point1, t_point line1point2,
 }
 
 
-/* set the delta for comparisons */
-int setDelta(double delta)
-{
-  int result = TRUE;  
-
-  if (delta >= 0.0)
-    BGdelta = delta;  
-  else 
-    result = FALSE;  
-
-  return(result);  
-}
-
-/* get the current delta value */
-double getDelta()
-{
-  return(BGdelta);  
-}
-
 int testDelta(double compVal, double delta)
 {
   int result;  
@@ -367,10 +347,14 @@ int deltaAbs(double compVal)
    return (fabs(compVal) <= DELTA);  
 }
 
-/* test for less than delta (compare with getDelta()) */
 int deltaVal(double compVal)
 {
    //return(testDelta(compVal, BGdelta));  
-   return (fabs(compVal) <= BGdelta);  
+   return (fabs(compVal) <= DELTA);  
 }
       
+
+int signum(double x) 
+{
+   return ((x > 0) ? 1 : ((x < 0) ? -1 : 0));
+}

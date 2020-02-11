@@ -19,7 +19,7 @@
 /* define an initial delta value for checking equal to zero. */
 /* any number lying in the delta environment of zero yields */
 /* TRUE, all others FALSE */
-#define DELTA 1.0e-14
+#define DELTA 1.0e-12
 
 
 /********************************************************************/
@@ -113,5 +113,9 @@ int deltaAbs(double compVal);
 
 /* test for less than delta (compare with getDelta()) */
 int deltaVal(double compVal);  
+
+double calcArea(t_point point1, t_point point2, t_point point3);
+
+int signum(double x);
 
 #endif

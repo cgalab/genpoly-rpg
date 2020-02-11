@@ -26,7 +26,7 @@
 
 /* define sorting distance: check whether we have parallel 
    lines (for division) */
-#define PARDELTA 1.0e-20
+#define PARDELTA 1.0e-12
 
 
 /********************************************************************/
