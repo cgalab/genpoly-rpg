@@ -72,7 +72,7 @@ int idComp(const void *a, const void *b)
    }
 }
 
-inline void incrIndex(int *ind, int nrOfPoints)
+void incrIndex(int *ind, int nrOfPoints)
 {
    if (*ind == nrOfPoints) *ind = 1;
    else                    ++(*ind);
