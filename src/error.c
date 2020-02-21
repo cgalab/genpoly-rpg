@@ -92,6 +92,9 @@ void ERerror(int errNumber)
       fprintf(stderr, 
               " --count <number>:   specifies the number of polygons to ");  
       fprintf(stderr, "generate.\n\n");  
+      fprintf(stderr,
+              " --status-fd <FD>:   File-Descriptor number to print statistics to.\n");
+      fprintf(stderr, "                     (Try 1 or 2 if you do not know what else to use.)\n\n");
       break;  
    case ERR_INTOVER:
       fprintf(stderr, "OVERFLOW WHEN COUNTING POLYGONS\n");  
